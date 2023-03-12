@@ -1,26 +1,32 @@
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button, MenuItem, TextField, Tooltip, Typography } from '@mui/material';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import StatusAlert from '../components/__molecules__/StatusAlert';
 import PageWrapper from '../components/__templates__/PageWrapper';
-import { RESOURCES, TYPES } from '../constants/costs';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	getListOfDepartments,
+	getListOfEnterprises,
+	getWorkingDaysStatus,
+} from '../redux/selectors';
 import { MONTHS } from '../constants/months';
+import StatusAlert from '../components/__molecules__/StatusAlert';
 import { YEARS } from '../constants/years';
 import {
-	getListOfEnterprisesAction,
+	clearWorkingDaysStatusAction,
+	createWorkingDaysAction,
 	getListOfDepartmentsAction,
-	createCostsAction,
-	clearCostsStatusAction,
+	getListOfEnterprisesAction,
 } from '../redux/api/ApiActions';
-import { getListOfEnterprises, getListOfDepartments, getCostsStatus } from '../redux/selectors';
+import styled from 'styled-components';
 
-function CreateCosts() {
+function CreateWorkingDays() {
 	const dispatch = useDispatch();
+
+	const status = useSelector(getWorkingDaysStatus);
 	const listOfEnterprises = useSelector(getListOfEnterprises);
 	const listOfDepartments = useSelector(getListOfDepartments);
-	const status = useSelector(getCostsStatus);
+
 	const [enterprises, setEnterprises] = useState<{ id: string; name: string }[]>([]);
+
 	const [enterpriseName, setEnterpriseName] = useState('');
 
 	const [departments, setDepartments] = useState([]);
@@ -29,8 +35,6 @@ function CreateCosts() {
 	const [monthsValues, setMonthsValues] = useState<
 		{ id: number; month: string; value: string }[]
 	>([]);
-	const [type, setType] = useState('');
-	const [resource, setResource] = useState('');
 	const handleChangeEnterpriseName = (e: React.ChangeEvent<HTMLInputElement>) =>
 		setEnterpriseName(e.target.value);
 
@@ -62,25 +66,23 @@ function CreateCosts() {
 		setMonthsValues(newArr);
 	};
 
-	const handleCreateCosts = () => {
+	const handleCreateWorkingDays = () => {
 		dispatch(
-			createCostsAction.request({
+			createWorkingDaysAction.request({
 				enterprise: enterpriseName,
 				department: departmentName,
 				year,
-				type,
-				resource,
-				costs: monthsValues,
+				days: monthsValues,
 			})
 		);
 	};
 
 	const handleCloseStatusMessage = () => {
-		dispatch(clearCostsStatusAction.request());
+		dispatch(clearWorkingDaysStatusAction.request());
 	};
 	const isAllCompleted = useMemo(
-		() => enterpriseName && departmentName && year && resource && type,
-		[enterpriseName, departmentName, year, resource, type]
+		() => enterpriseName && departmentName && year,
+		[enterpriseName, departmentName, year]
 	);
 	const severity = useMemo(() => (status.includes('Success') ? 'success' : 'error'), [status]);
 	useEffect(() => {
@@ -150,34 +152,7 @@ function CreateCosts() {
 						</TextField>
 					</Tooltip>
 				)}
-				<TextField
-					value={type}
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
-					select
-					color='primary'
-					size='small'
-					label='Select type'>
-					{TYPES.map((type: any) => (
-						<MenuItem key={type} value={type}>
-							{type}
-						</MenuItem>
-					))}
-				</TextField>
-				<TextField
-					value={resource}
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-						setResource(e.target.value)
-					}
-					select
-					color='primary'
-					size='small'
-					label='Select resource or fuel'>
-					{RESOURCES.map((type: any) => (
-						<MenuItem key={type} value={type}>
-							{type}
-						</MenuItem>
-					))}
-				</TextField>
+
 				<TextField
 					fullWidth
 					size='small'
@@ -193,7 +168,10 @@ function CreateCosts() {
 					))}
 				</TextField>
 
-				<Typography>Empty month`s value will automatically equal 0.</Typography>
+				<Typography>
+					Enter the amount of working days on each month. Empty month`s value will
+					automatically equal 0.
+				</Typography>
 				<YearsRange>
 					{monthsValues.map((item: { id: number; month: string; value: string }) => {
 						return (
@@ -216,7 +194,7 @@ function CreateCosts() {
 					<Button
 						variant='contained'
 						disabled={!isAllCompleted}
-						onClick={handleCreateCosts}>
+						onClick={handleCreateWorkingDays}>
 						Complete
 					</Button>
 
@@ -252,4 +230,4 @@ const YearsRange = styled('div')`
 	width: 900px;
 `;
 
-export default CreateCosts;
+export default CreateWorkingDays;

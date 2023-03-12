@@ -18,3 +18,12 @@ export const createVolumesAction = createActions('CREATE_VOLUMES');
 export const clearVolumesStatusAction = createActions('CLEAR_VOLUMES_STATUS');
 
 export const getAllEnterpriseStatisticsAction = createActions('GET_ALL_ENTERPRISES_STATISTICS');
+export const getFullEnterpriseInfoByResourceAction = createActions(
+	'GET_FULL_ENTERPRISE_INFO_BY_RESOURCE'
+);
+export const getFullDepartmentInfoAction = createActions('GET_FULL_DEPARTMENT_INFO');
+// 2 lab
+export const createWorkingDaysAction = createActions('CREATE_WORKING_DAYS');
+export const clearWorkingDaysStatusAction = createActions('CLEAR_WORKING_DAYS_STATUS');
+
+export const getMonthlyConsumptionInfoAction = createActions('GET_MONTHLY_CONSUMPTION_INFO');

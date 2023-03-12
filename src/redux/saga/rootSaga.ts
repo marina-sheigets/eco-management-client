@@ -4,8 +4,9 @@ import departmentSaga from './departmentSaga';
 import costsSaga from './costsSaga';
 import volumesSaga from './volumesSaga';
 import statisticsSaga from './statisticsSaga';
-
+import daysSaga from './daysSaga';
 const sagasArray = [
+	daysSaga(),
 	enterpriseSaga(),
 	departmentSaga(),
 	costsSaga(),

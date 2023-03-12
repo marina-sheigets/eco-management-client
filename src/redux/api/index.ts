@@ -61,19 +61,25 @@ export const createCostsRequest = async ({
 	department,
 	enterprise,
 	type,
+	year,
+	resource,
 	costs,
 }: {
 	department: string;
 	enterprise: string;
 	type: string;
-	costs: { year: string; value: string }[];
+	year: number;
+	resource: string;
+	costs: { id: number; month: string; value: string }[];
 }) => {
 	try {
 		const response = await axios.post(`/api/create/costs`, {
 			department,
 			enterprise,
 			type,
+			resource,
 			costs,
+			year,
 		});
 		return { success: true, data: response.data };
 	} catch (err: any) {
@@ -101,6 +107,33 @@ export const createVolumesRequest = async ({
 			enterprise,
 			type,
 			volumes,
+		});
+		return { success: true, data: response.data };
+	} catch (err: any) {
+		return {
+			success: false,
+			data: err.response.data || { message: 'Ops, something went wrong !' },
+		};
+	}
+};
+
+export const createWorkingDaysRequest = async ({
+	department,
+	enterprise,
+	year,
+	days,
+}: {
+	department: string;
+	enterprise: string;
+	year: number;
+	days: { month: string; value: string }[];
+}) => {
+	try {
+		const response = await axios.post(`/api/create/days`, {
+			department,
+			enterprise,
+			year,
+			days,
 		});
 		return { success: true, data: response.data };
 	} catch (err: any) {

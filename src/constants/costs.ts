@@ -1,1 +1,2 @@
-export const TYPES_OF_COSTS = ['Electricity', 'Water', 'Gas', 'Diesel fuel', 'Gasoline'];
+export const TYPES = ['Costs', 'Volumes'];
+export const RESOURCES = ['Electricity', 'Water', 'Gas', 'Diesel fuel', 'Gasoline'];

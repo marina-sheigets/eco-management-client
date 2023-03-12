@@ -16,9 +16,10 @@ export const LINKS = [
 	},
 	{
 		id: 4,
-		name: 'Create Volumes',
-		route: '/create/volumes',
+		name: 'Create Working Days',
+		route: '/create/days',
 	},
+
 	{
 		id: 5,
 		name: 'Watch Statistics',

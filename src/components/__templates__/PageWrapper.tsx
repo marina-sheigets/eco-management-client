@@ -18,5 +18,6 @@ const AppWrapper = styled('div')`
 `;
 const Wrapper = styled('div')`
 	padding: 2rem;
+	width: 100%;
 `;
 export default PageWrapper;
