@@ -13,4 +13,7 @@ export const getWorkingDaysStatus = (state: RootState) => state.days.status;
 export const getFullEnterpriseInfoStatus = (state: RootState) => state.statistics.status;
 export const getFullEnterpriseInfo = (state: RootState) => state.statistics.statistics;
 export const getFullDepartmentInfo = (state: RootState) => state.statistics.departmentStatistics;
+export const getFullDepartmentForYearInfo = (state: RootState) =>
+	state.statistics.departmentForYearStatistics;
+
 export const getMonthlyConsumptionInfo = (state: RootState) => state.statistics.monthlyConsumption;

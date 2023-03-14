@@ -8,19 +8,19 @@ import {
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RESOURCES, TYPES } from '../../constants/costs';
+import { RESOURCES, TYPES } from '../../../constants/costs';
 import {
 	getListOfEnterprisesAction,
 	getFullEnterpriseInfoByResourceAction,
-} from '../../redux/api/ApiActions';
+} from '../../../redux/api/ApiActions';
 import {
 	getFullEnterpriseInfoStatus,
 	getFullEnterpriseInfo,
 	getListOfEnterprises,
-} from '../../redux/selectors';
-import AccordionWrapper from '../__atoms__/AccordionWrapper';
-import TextFieldsWrapper from '../__atoms__/TextFieldsWrapper';
-import StatisticsTable from './FullStatisticsTable';
+} from '../../../redux/selectors';
+import AccordionWrapper from '../../__atoms__/AccordionWrapper';
+import TextFieldsWrapper from '../../__atoms__/TextFieldsWrapper';
+import StatisticsTable from '../FullStatisticsTable';
 
 function FullEnterpriseStatistics() {
 	const dispatch = useDispatch();

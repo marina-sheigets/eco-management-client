@@ -3,9 +3,11 @@ import {
 	getFullEnterpriseInfoByResourceRequest,
 	getMonthlyConsumptionInfoRequest,
 	getFullDepartmentInfoRequest,
+	getFullDepartmentInfoForYearRequest,
 } from '../api/statistics';
 import {
 	getFullDepartmentInfoAction,
+	getFullDepartmentInfoForYearAction,
 	getFullEnterpriseInfoByResourceAction,
 	getMonthlyConsumptionInfoAction,
 } from '../api/ApiActions';
@@ -30,6 +32,16 @@ function* getFullDepartmentInfo(action: any) {
 	}
 }
 
+function* getFullDepartmentInfoForYear(action: any) {
+	try {
+		// @ts-ignore
+		const res = yield call(getFullDepartmentInfoForYearRequest, action.payload);
+		yield put(getFullDepartmentInfoForYearAction.success(res.data));
+	} catch ({ message }: any) {
+		yield put(getFullDepartmentInfoForYearAction.failed({ message }));
+	}
+}
+
 function* getMonthlyConsumptionInfo(action: any) {
 	try {
 		// @ts-ignore
@@ -43,6 +55,8 @@ function* getMonthlyConsumptionInfo(action: any) {
 function* statisticsWatcher() {
 	yield takeLatest(getFullEnterpriseInfoByResourceAction.type.REQUEST, getFullEnterpriseInfo);
 	yield takeLatest(getFullDepartmentInfoAction.type.REQUEST, getFullDepartmentInfo);
+	yield takeLatest(getFullDepartmentInfoForYearAction.type.REQUEST, getFullDepartmentInfoForYear);
+
 	yield takeLatest(getMonthlyConsumptionInfoAction.type.REQUEST, getMonthlyConsumptionInfo);
 }
 

@@ -22,6 +22,9 @@ export const getFullEnterpriseInfoByResourceAction = createActions(
 	'GET_FULL_ENTERPRISE_INFO_BY_RESOURCE'
 );
 export const getFullDepartmentInfoAction = createActions('GET_FULL_DEPARTMENT_INFO');
+export const getFullDepartmentInfoForYearAction = createActions(
+	'GET_FULL_DEPARTMENT_INFO_FOR_YEAR'
+);
 // 2 lab
 export const createWorkingDaysAction = createActions('CREATE_WORKING_DAYS');
 export const clearWorkingDaysStatusAction = createActions('CLEAR_WORKING_DAYS_STATUS');

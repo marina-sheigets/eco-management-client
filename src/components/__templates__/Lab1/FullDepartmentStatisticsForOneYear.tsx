@@ -9,34 +9,33 @@ import {
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RESOURCES, TYPES } from '../../constants/costs';
+import { YEARS } from '../../../constants/years';
 import {
-	getListOfEnterprisesAction,
+	getFullDepartmentInfoForYearAction,
 	getListOfDepartmentsAction,
-	getFullDepartmentInfoAction,
-} from '../../redux/api/ApiActions';
+	getListOfEnterprisesAction,
+} from '../../../redux/api/ApiActions';
 import {
+	getFullDepartmentForYearInfo,
 	getFullEnterpriseInfoStatus,
-	getFullDepartmentInfo,
-	getListOfEnterprises,
 	getListOfDepartments,
-} from '../../redux/selectors';
-import AccordionWrapper from '../__atoms__/AccordionWrapper';
-import TextFieldsWrapper from '../__atoms__/TextFieldsWrapper';
-import StatisticsTable from './FullStatisticsTable';
+	getListOfEnterprises,
+} from '../../../redux/selectors';
+import AccordionWrapper from '../../__atoms__/AccordionWrapper';
+import TextFieldsWrapper from '../../__atoms__/TextFieldsWrapper';
+import DepartmentStatisticsForYearTable from './DepartmentStatisticsForYearTable';
 
-function FullDepartmentStatistics() {
+function FullDepartmentStatisticsForOneYear() {
 	const dispatch = useDispatch();
 
 	const status = useSelector(getFullEnterpriseInfoStatus);
-	const fullDepartmentInfo = useSelector(getFullDepartmentInfo);
+	const fullDepartmentInfo = useSelector(getFullDepartmentForYearInfo);
 	const listOfEnterprises = useSelector(getListOfEnterprises);
 	const listOfDepartments = useSelector(getListOfDepartments);
 
 	const [enterprises, setEnterprises] = useState<{ id: string; name: string }[]>([]);
 	const [enterpriseName, setEnterpriseName] = useState('');
-	const [resource, setResource] = useState('');
-	const [type, setType] = useState('');
+	const [year, setYear] = useState('');
 	const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
 	const [departmentName, setDepartmentName] = useState('');
 
@@ -52,7 +51,6 @@ function FullDepartmentStatistics() {
 		() => departments.find((item) => item.name === departmentName)?.id,
 		[departmentName, departments]
 	);
-
 	useEffect(() => {
 		setEnterprises(listOfEnterprises);
 	}, [listOfEnterprises]);
@@ -73,23 +71,22 @@ function FullDepartmentStatistics() {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (enterpriseName && resource && type) {
+		if (enterpriseName && year && selectedDepartmentId) {
 			dispatch(
-				getFullDepartmentInfoAction.request({
+				getFullDepartmentInfoForYearAction.request({
 					department: selectedDepartmentId,
 					enterprise: selectedEnterpriseId,
-					resource,
-					type,
+					year,
 				})
 			);
 		}
-	}, [enterpriseName, type, resource, dispatch, selectedEnterpriseId, selectedDepartmentId]);
+	}, [enterpriseName, year, dispatch, selectedEnterpriseId, selectedDepartmentId]);
 
 	return (
 		<AccordionWrapper>
 			<Accordion title='See full statistics in department'>
 				<AccordionSummary aria-controls='panel1d-content' id='panel1d-header'>
-					<Typography>See whole statistics in enterprise</Typography>
+					<Typography>See full statistics in department for one year</Typography>
 				</AccordionSummary>
 				<TextFieldsWrapper>
 					<TextField
@@ -137,34 +134,17 @@ function FullDepartmentStatistics() {
 					)}
 					<TextField
 						fullWidth
-						value={resource}
+						value={year}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setResource(e.target.value)
+							setYear(e.target.value)
 						}
 						select
 						color='primary'
 						size='small'
-						label='Select resource or fuel'>
-						{RESOURCES.map((item: any) => (
+						label='Select year'>
+						{YEARS.map((item: number) => (
 							<MenuItem key={item} value={item}>
 								{item}
-							</MenuItem>
-						))}
-					</TextField>
-
-					<TextField
-						fullWidth
-						value={type}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setType(e.target.value)
-						}
-						select
-						color='primary'
-						size='small'
-						label='Select type'>
-						{TYPES.map((type: any) => (
-							<MenuItem key={type} value={type}>
-								{type}
 							</MenuItem>
 						))}
 					</TextField>
@@ -172,11 +152,15 @@ function FullDepartmentStatistics() {
 				{status === 'Import' ? (
 					<CircularProgress />
 				) : (
-					<StatisticsTable data={fullDepartmentInfo} structureName={departmentName} />
+					<DepartmentStatisticsForYearTable
+						data={fullDepartmentInfo}
+						year={year}
+						structureName={departmentName}
+					/>
 				)}
 			</Accordion>
 		</AccordionWrapper>
 	);
 }
 
-export default FullDepartmentStatistics;
+export default FullDepartmentStatisticsForOneYear;

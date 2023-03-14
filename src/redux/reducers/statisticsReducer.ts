@@ -1,6 +1,7 @@
 import { AnyAction } from '@reduxjs/toolkit';
 import {
 	getFullDepartmentInfoAction,
+	getFullDepartmentInfoForYearAction,
 	getFullEnterpriseInfoByResourceAction,
 	getMonthlyConsumptionInfoAction,
 } from '../api/ApiActions';
@@ -13,12 +14,19 @@ interface InitialState {
 		month: string;
 		values: { year: number; costs: number; days: number; average: number }[];
 	};
+	departmentForYearStatistics: {
+		[fuel: string]: {
+			volumes?: { [month: string]: number };
+			costs?: { [month: string]: number };
+		};
+	};
 }
 const initialState: InitialState = {
 	status: '',
 	statistics: [],
 	departmentStatistics: [],
 	monthlyConsumption: { month: '', values: [] },
+	departmentForYearStatistics: {},
 };
 
 const statisticsReducer = (state = initialState, action: AnyAction) => {
@@ -50,6 +58,21 @@ const statisticsReducer = (state = initialState, action: AnyAction) => {
 				departmentStatistics: action.payload.statistics ?? [],
 			};
 		}
+		case getFullDepartmentInfoForYearAction.type.REQUEST: {
+			return {
+				...state,
+				status: 'Import',
+			};
+		}
+
+		case getFullDepartmentInfoForYearAction.type.SUCCESS: {
+			return {
+				...state,
+				status: 'Finished',
+				departmentForYearStatistics: action.payload.statistics ?? {},
+			};
+		}
+
 		case getMonthlyConsumptionInfoAction.type.REQUEST: {
 			return {
 				...state,
