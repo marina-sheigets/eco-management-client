@@ -84,7 +84,7 @@ function MonthlyConsumptionStatistics() {
 		<AccordionWrapper>
 			<Accordion title='See daily consumption in department'>
 				<AccordionSummary aria-controls='panel1d-content' id='panel1d-header'>
-					<Typography>See whole statistics in enterprise</Typography>
+					<Typography>See daily consumption statistics in enterprise</Typography>
 				</AccordionSummary>
 				<TextFieldsWrapper>
 					<TextField
