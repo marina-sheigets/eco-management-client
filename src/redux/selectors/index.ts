@@ -17,3 +17,5 @@ export const getFullDepartmentForYearInfo = (state: RootState) =>
 	state.statistics.departmentForYearStatistics;
 
 export const getMonthlyConsumptionInfo = (state: RootState) => state.statistics.monthlyConsumption;
+export const getDailyConsumptionInfoInEnterprise = (state: RootState) =>
+	state.statistics.dailyConsumptionInEnterprise;

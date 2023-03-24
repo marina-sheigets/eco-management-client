@@ -30,3 +30,6 @@ export const createWorkingDaysAction = createActions('CREATE_WORKING_DAYS');
 export const clearWorkingDaysStatusAction = createActions('CLEAR_WORKING_DAYS_STATUS');
 
 export const getMonthlyConsumptionInfoAction = createActions('GET_MONTHLY_CONSUMPTION_INFO');
+export const getDailyConsumptionInEnterpriseAction = createActions(
+	'GET_DAILY_CONSUMPTION_IN_ENTERPRISE'
+);

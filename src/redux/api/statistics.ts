@@ -89,3 +89,25 @@ export const getFullDepartmentInfoForYearRequest = async ({
 		};
 	}
 };
+
+export const getDailyConsumptionInEnterpriseRequest = async ({
+	enterprise,
+	resource,
+	month,
+}: {
+	enterprise: string;
+	resource: string;
+	month: string;
+}) => {
+	try {
+		const response = await axios.get(
+			`/api/get/consumption/full/statistics/${enterprise}/${resource}/${month}`
+		);
+		return { success: true, data: response.data };
+	} catch (err: any) {
+		return {
+			success: false,
+			data: err.response.data || { message: 'Ops, something went wrong !' },
+		};
+	}
+};

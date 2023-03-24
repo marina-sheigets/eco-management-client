@@ -4,87 +4,66 @@ import {
 	CircularProgress,
 	MenuItem,
 	TextField,
-	Tooltip,
 	Typography,
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RESOURCES } from '../../constants/costs';
-import AccordionWrapper from '../__atoms__/AccordionWrapper';
-import TextFieldsWrapper from '../__atoms__/TextFieldsWrapper';
+import { MONTHS } from '../../constants/months';
 import {
 	getListOfEnterprisesAction,
-	getListOfDepartmentsAction,
-	getMonthlyConsumptionInfoAction,
+	getDailyConsumptionInEnterpriseAction,
 } from '../../redux/api/ApiActions';
 import {
 	getFullEnterpriseInfoStatus,
 	getListOfEnterprises,
-	getListOfDepartments,
-	getMonthlyConsumptionInfo,
+	getDailyConsumptionInfoInEnterprise,
 } from '../../redux/selectors';
-import { MONTHS } from '../../constants/months';
+import AccordionWrapper from '../__atoms__/AccordionWrapper';
+import TextFieldsWrapper from '../__atoms__/TextFieldsWrapper';
 import ConsumptionTable from '../__molecules__/ConsumptionTable';
 
-function MonthlyConsumptionStatistics() {
+function DailyConsumptionInEnterprise() {
 	const dispatch = useDispatch();
 
 	const status = useSelector(getFullEnterpriseInfoStatus);
-	const monthlyConsumptionInfo = useSelector(getMonthlyConsumptionInfo);
+	const dailyConsumptionInfoInEnterprise = useSelector(getDailyConsumptionInfoInEnterprise);
 	const listOfEnterprises = useSelector(getListOfEnterprises);
-	const listOfDepartments = useSelector(getListOfDepartments);
 
 	const [month, setMonth] = useState('');
 	const [enterprises, setEnterprises] = useState<{ id: string; name: string }[]>([]);
 	const [enterpriseName, setEnterpriseName] = useState('');
 	const [resource, setResource] = useState('');
-	const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
-	const [departmentName, setDepartmentName] = useState('');
 
-	const handleChangeDepartmentName = (e: React.ChangeEvent<HTMLInputElement>) =>
-		setDepartmentName(e.target.value);
-
-	const selectedDepartmentId = useMemo(
-		() => departments.find((item) => item.name === departmentName)?.id,
-		[departmentName, departments]
+	const selectedEnterpriseId = useMemo(
+		() => enterprises.find((item) => item.name === enterpriseName)?.id,
+		[enterpriseName, enterprises]
 	);
-
 	useEffect(() => {
 		setEnterprises(listOfEnterprises);
 	}, [listOfEnterprises]);
-
-	useEffect(() => {
-		setDepartments(listOfDepartments);
-	}, [listOfDepartments]);
-
-	useEffect(() => {
-		if (enterpriseName.length) {
-			const elem = enterprises.find((item) => item.name === enterpriseName);
-			dispatch(getListOfDepartmentsAction.request({ id: elem?.id }));
-		}
-	}, [enterpriseName, dispatch, enterprises]);
 
 	useEffect(() => {
 		dispatch(getListOfEnterprisesAction.request());
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (departmentName && resource && month) {
+		if (selectedEnterpriseId && resource && month) {
 			dispatch(
-				getMonthlyConsumptionInfoAction.request({
-					department: selectedDepartmentId,
+				getDailyConsumptionInEnterpriseAction.request({
+					enterprise: selectedEnterpriseId,
 					resource,
 					month,
 				})
 			);
 		}
-	}, [month, resource, dispatch, departmentName, selectedDepartmentId]);
+	}, [month, resource, dispatch, selectedEnterpriseId]);
 
 	return (
 		<AccordionWrapper>
-			<Accordion title='See daily consumption in department'>
+			<Accordion title='See daily consumption in enterprise'>
 				<AccordionSummary aria-controls='panel1d-content' id='panel1d-header'>
-					<Typography>See daily consumption statistics in department</Typography>
+					<Typography>See daily consumption statistics in enterprise</Typography>
 				</AccordionSummary>
 				<TextFieldsWrapper>
 					<TextField
@@ -103,33 +82,7 @@ function MonthlyConsumptionStatistics() {
 							</MenuItem>
 						))}
 					</TextField>
-					{enterpriseName ? (
-						<TextField
-							value={departmentName}
-							onChange={handleChangeDepartmentName}
-							select
-							color='primary'
-							size='small'
-							label='Select department'>
-							{departments.map((department: any) => (
-								<MenuItem key={department.id} value={department.name}>
-									{department.name}
-								</MenuItem>
-							))}
-						</TextField>
-					) : (
-						<Tooltip title='Select enterprise at first'>
-							<TextField
-								disabled
-								value={''}
-								onChange={() => {}}
-								select
-								color='primary'
-								size='small'
-								label='Select department'
-								fullWidth></TextField>
-						</Tooltip>
-					)}
+
 					<TextField
 						fullWidth
 						value={resource}
@@ -166,11 +119,14 @@ function MonthlyConsumptionStatistics() {
 				{status === 'Import' ? (
 					<CircularProgress />
 				) : (
-					<ConsumptionTable data={monthlyConsumptionInfo} department={departmentName} />
+					<ConsumptionTable
+						data={dailyConsumptionInfoInEnterprise}
+						department={enterpriseName}
+					/>
 				)}
 			</Accordion>
 		</AccordionWrapper>
 	);
 }
 
-export default MonthlyConsumptionStatistics;
+export default DailyConsumptionInEnterprise;

@@ -73,7 +73,6 @@ const departmentReducer = (state = initialState, action: AnyAction) => {
 			};
 		}
 		case getListOfDepartmentsAction.type.FAILED: {
-			console.log(action.payload);
 			return state;
 		}
 		default: {
