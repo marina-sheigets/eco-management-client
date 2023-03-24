@@ -46,17 +46,18 @@ function FullEnterpriseStatistics() {
 		if (fullEnterpriseInfo.length) {
 			const data = fullEnterpriseInfo.map(
 				(item: { year: number; values: { [month: string]: number } }) => {
-					return {
-						year: item.year,
-						values: MONTHS.map((month: string) => {
-							return {
-								...item.values,
-								[month]: +item.values[month].toFixed(2),
-							};
-						}),
-					};
+					const modifiedValues = Object.fromEntries(
+						Object.entries(item.values).map(([key, value]) => {
+							if (MONTHS.includes(key)) {
+								return [key, value.toFixed(1)];
+							}
+							return [key, value];
+						})
+					);
+					return { ...item, values: modifiedValues };
 				}
 			);
+			console.log(data);
 			setData(data);
 		}
 	}, [fullEnterpriseInfo]);
