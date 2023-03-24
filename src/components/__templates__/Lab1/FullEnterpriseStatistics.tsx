@@ -44,15 +44,18 @@ function FullEnterpriseStatistics() {
 
 	useEffect(() => {
 		if (fullEnterpriseInfo.length) {
-			fullEnterpriseInfo.forEach(
+			const data = fullEnterpriseInfo.map(
 				(item: { year: number; values: { [month: string]: number } }) => {
-					MONTHS.forEach((month: string) => {
-						item.values[month] = +item.values[month].toFixed(2);
-					});
+					return {
+						year: item.year,
+						values: MONTHS.forEach((month: string) => {
+							item.values[month] = +item.values[month].toFixed(2);
+						}),
+					};
 				}
 			);
+			setData(data);
 		}
-		setData(fullEnterpriseInfo);
 	}, [fullEnterpriseInfo]);
 	useEffect(() => {
 		dispatch(getListOfEnterprisesAction.request());
