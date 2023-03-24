@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RESOURCES, TYPES } from '../../../constants/costs';
+import { MONTHS } from '../../../constants/months';
 import {
 	getListOfEnterprisesAction,
 	getFullEnterpriseInfoByResourceAction,
@@ -27,6 +28,7 @@ function FullEnterpriseStatistics() {
 	const status = useSelector(getFullEnterpriseInfoStatus);
 	const fullEnterpriseInfo = useSelector(getFullEnterpriseInfo);
 	const listOfEnterprises = useSelector(getListOfEnterprises);
+	const [data, setData] = useState<{ year: number; values: { [month: string]: number } }[]>([]);
 	const [enterprises, setEnterprises] = useState<{ id: string; name: string }[]>([]);
 	const [enterpriseName, setEnterpriseName] = useState('');
 	const [resource, setResource] = useState('');
@@ -40,6 +42,18 @@ function FullEnterpriseStatistics() {
 		setEnterprises(listOfEnterprises);
 	}, [listOfEnterprises]);
 
+	useEffect(() => {
+		if (fullEnterpriseInfo.length) {
+			fullEnterpriseInfo.forEach(
+				(item: { year: number; values: { [month: string]: number } }) => {
+					MONTHS.forEach((month: string) => {
+						item.values[month] = +item.values[month].toFixed(2);
+					});
+				}
+			);
+		}
+		setData(fullEnterpriseInfo);
+	}, [fullEnterpriseInfo]);
 	useEffect(() => {
 		dispatch(getListOfEnterprisesAction.request());
 	}, [dispatch]);
@@ -116,7 +130,7 @@ function FullEnterpriseStatistics() {
 				{status === 'Import' ? (
 					<CircularProgress />
 				) : (
-					<StatisticsTable data={fullEnterpriseInfo} structureName={enterpriseName} />
+					<StatisticsTable data={data} structureName={enterpriseName} />
 				)}
 			</Accordion>
 		</AccordionWrapper>
