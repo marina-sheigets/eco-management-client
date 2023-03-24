@@ -48,8 +48,11 @@ function FullEnterpriseStatistics() {
 				(item: { year: number; values: { [month: string]: number } }) => {
 					return {
 						year: item.year,
-						values: MONTHS.forEach((month: string) => {
-							item.values[month] = +item.values[month].toFixed(2);
+						values: MONTHS.map((month: string) => {
+							return {
+								...item.values,
+								[month]: +item.values[month].toFixed(2),
+							};
 						}),
 					};
 				}
