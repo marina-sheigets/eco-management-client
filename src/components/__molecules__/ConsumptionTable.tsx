@@ -11,7 +11,7 @@ function ConsumptionTable({
 	};
 	department: string;
 }) {
-	if (!data.values.length) {
+	if (!Object.keys(data).length || !data?.values.length) {
 		return <h4>No data...</h4>;
 	}
 	return (

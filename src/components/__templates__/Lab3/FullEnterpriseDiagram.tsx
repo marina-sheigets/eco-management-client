@@ -1,68 +1,47 @@
-import {
-	Accordion,
-	AccordionSummary,
-	CircularProgress,
-	MenuItem,
-	TextField,
-	Typography,
-} from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RESOURCES, TYPES } from '../../../constants/costs';
-import { MONTHS } from '../../../constants/months';
-import {
-	getListOfEnterprisesAction,
-	getFullEnterpriseInfoByResourceAction,
-} from '../../../redux/api/ApiActions';
-import {
-	getFullEnterpriseInfoStatus,
-	getFullEnterpriseInfo,
-	getListOfEnterprises,
-} from '../../../redux/selectors';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, registerables } from 'chart.js';
+import styled from 'styled-components';
 import AccordionWrapper from '../../__atoms__/AccordionWrapper';
+import { Accordion, AccordionSummary, MenuItem, TextField, Typography } from '@mui/material';
 import TextFieldsWrapper from '../../__atoms__/TextFieldsWrapper';
-import StatisticsTable from '../FullStatisticsTable';
+import { RESOURCES, TYPES } from '../../../constants/costs';
+import { getFullEnterpriseInfo, getListOfEnterprises } from '../../../redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	getFullEnterpriseInfoByResourceAction,
+	getListOfEnterprisesAction,
+} from '../../../redux/api/ApiActions';
+import { YEARS } from '../../../constants/years';
+ChartJS.register(...registerables);
 
-function FullEnterpriseStatistics() {
+function FullEnterpriseDiagram() {
 	const dispatch = useDispatch();
-	const status = useSelector(getFullEnterpriseInfoStatus);
+
 	const fullEnterpriseInfo = useSelector(getFullEnterpriseInfo);
 	const listOfEnterprises = useSelector(getListOfEnterprises);
-	const [data, setData] = useState<{ year: number; values: { [month: string]: number } }[]>([]);
+
 	const [enterprises, setEnterprises] = useState<{ id: string; name: string }[]>([]);
 	const [enterpriseName, setEnterpriseName] = useState('');
 	const [resource, setResource] = useState('');
 	const [type, setType] = useState('');
-
+	const [chartData, setChartData] = useState<number[]>([]);
 	const selectedEnterpriseId = useMemo(
 		() => enterprises.find((item) => item.name === enterpriseName)?.id,
 		[enterpriseName, enterprises]
 	);
-	useEffect(() => {
-		setEnterprises(listOfEnterprises);
-	}, [listOfEnterprises]);
 
 	useEffect(() => {
-		if (fullEnterpriseInfo.length) {
-			const data = fullEnterpriseInfo.map(
-				(item: { year: number; values: { [month: string]: number } }) => {
-					const modifiedValues = Object.fromEntries(
-						Object.entries(item.values).map(([key, value]) => {
-							if (MONTHS.includes(key)) {
-								return [key, value.toFixed(1)];
-							}
-							return [key, value];
-						})
-					);
-					return { ...item, values: modifiedValues };
-				}
-			);
-			setData(data);
-		}
+		const data: number[] = [];
+		fullEnterpriseInfo.forEach(
+			(item: { year: number; values: { [month: string]: number } }) => {
+				const totalCostForYear = Object.values(item.values).reduce((a, b) => a + b, 0);
+
+				data.push(totalCostForYear);
+			}
+		);
+		setChartData(data);
 	}, [fullEnterpriseInfo]);
-	useEffect(() => {
-		dispatch(getListOfEnterprisesAction.request());
-	}, [dispatch]);
 
 	useEffect(() => {
 		if (enterpriseName && resource && type) {
@@ -76,11 +55,19 @@ function FullEnterpriseStatistics() {
 		}
 	}, [enterpriseName, type, resource, dispatch, selectedEnterpriseId]);
 
+	useEffect(() => {
+		setEnterprises(listOfEnterprises);
+	}, [listOfEnterprises]);
+
+	useEffect(() => {
+		dispatch(getListOfEnterprisesAction.request());
+	}, [dispatch]);
+
 	return (
 		<AccordionWrapper>
-			<Accordion title='See full statistics in enterprise'>
+			<Accordion>
 				<AccordionSummary aria-controls='panel1d-content' id='panel1d-header'>
-					<Typography>See whole statistics in enterprise</Typography>
+					<Typography>See total enterprise statistics</Typography>
 				</AccordionSummary>
 				<TextFieldsWrapper>
 					<TextField
@@ -115,7 +102,6 @@ function FullEnterpriseStatistics() {
 							</MenuItem>
 						))}
 					</TextField>
-
 					<TextField
 						fullWidth
 						value={type}
@@ -133,14 +119,23 @@ function FullEnterpriseStatistics() {
 						))}
 					</TextField>
 				</TextFieldsWrapper>
-				{status === 'Import' ? (
-					<CircularProgress />
-				) : (
-					<StatisticsTable data={data} structureName={enterpriseName} />
-				)}
+				<Wrapper>
+					{chartData.length ? (
+						<Line
+							data={{
+								labels: YEARS,
+								datasets: [{ label: enterpriseName, data: chartData }],
+							}}
+						/>
+					) : null}
+				</Wrapper>
 			</Accordion>
 		</AccordionWrapper>
 	);
 }
 
-export default FullEnterpriseStatistics;
+const Wrapper = styled('div')`
+	width: 700px;
+`;
+
+export default FullEnterpriseDiagram;
